@@ -877,7 +877,7 @@ def create_prediction_section(df_main, df_hostels, predictions, confidence_inter
     # Predictions
     future_dates = pd.date_range(
         start=df_main['Date'].max() + timedelta(days=1),
-        periods=30,
+        periods=120,
         freq='D'
     )
     
