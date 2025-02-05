@@ -626,7 +626,7 @@ def create_overview_section(df_main, df_hostels):
     with row1_col1:
         # Overall usage trend
         fig = px.line(df_main, x='Date', y=['Total_Demand', 'WTP_Release'],
-                     title='Campus Water Usage Trend',color='red')
+                     title='Campus Water Usage Trend')
         fig.update_layout(height=400)
         st.plotly_chart(fig, use_container_width=True)
     
