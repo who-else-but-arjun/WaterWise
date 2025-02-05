@@ -9,6 +9,10 @@ import calendar
 from sklearn.ensemble import IsolationForest
 from sklearn.linear_model import LinearRegression
 import calendar
+
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.ensemble import RandomForestRegressor
+from scipy import stats
 HOSTEL_DAILY_LIMITS = {
     'Large': 250000,  # 250 kL per day
     'Medium': 120000, # 120 kL per day
@@ -17,9 +21,6 @@ HOSTEL_DAILY_LIMITS = {
 
 CAMPUS_DAILY_LIMIT = 6.0  # 6 MLD
 
-from sklearn.preprocessing import MinMaxScaler
-from sklearn.ensemble import RandomForestRegressor
-from scipy import stats
 
 # Add these constants for water quality thresholds
 WATER_QUALITY_LIMITS = {
@@ -52,9 +53,9 @@ def generate_water_quality_data():
         # Add random events and noise
         event_factor = 1.0
         if np.random.random() < 0.02:  # Random events
-            event_factor = np.random.uniform(1.2, 1.5)
+            event_factor = np.random.uniform(1.2, 2.3)
         
-        noise = np.random.normal(0, 0.05)
+        noise = np.random.normal(0, 0.1)
         
         data['COD'].append(cod_base * seasonal_factor * event_factor * (1 + noise))
         data['BOD'].append(bod_base * seasonal_factor * event_factor * (1 + noise))
@@ -507,7 +508,7 @@ import pandas as pd
 
 def detect_campus_anomalies(df_main, df_hostels):
     # Use Isolation Forest for anomaly detection
-    iso_forest = IsolationForest(contamination=0.05, random_state=42)
+    iso_forest = IsolationForest(contamination=0.1, random_state=42)
     features = df_main[['Total_Demand', 'WTP_Release', 'Wastage']].copy()
     anomalies = iso_forest.fit_predict(features)
     anomaly_scores = iso_forest.score_samples(features)
@@ -563,7 +564,7 @@ def analyze_hostel_efficiency(df_hostels):
     return current_usage
 
 # Predict future requirements
-def predict_future_requirements(df_main, df_hostels, days=30):
+def predict_future_requirements(df_main, df_hostels, days=120):
     # Aggregate historical data
     historical_data = {
         'campus': df_main['Total_Demand'].values,
@@ -625,7 +626,7 @@ def create_overview_section(df_main, df_hostels):
     with row1_col1:
         # Overall usage trend
         fig = px.line(df_main, x='Date', y=['Total_Demand', 'WTP_Release'],
-                     title='Campus Water Usage Trend')
+                     title='Campus Water Usage Trend',color='red')
         fig.update_layout(height=400)
         st.plotly_chart(fig, use_container_width=True)
     
